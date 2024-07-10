@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -24,6 +25,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -118,7 +120,10 @@ fun UserGuess(){
         mutableStateOf("") // currentGuess is defined as empty string
     }
 //    var currentGuess: Int? = currentInput.
-    TextField(value = currentInput, onValueChange = { // as the text field is updated with string, it updates the string currentGuess
+    TextField(
+        value = currentInput,
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+        onValueChange = { // as the text field is updated with string, it updates the string currentGuess
         newValue ->
         currentInput = newValue
         println(currentInput)
