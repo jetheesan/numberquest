@@ -96,17 +96,43 @@ fun GameScreen(onNextScreen: () -> Unit) {
     }
 }
 
+private fun checkGuess( guess: String ) :String {
+    val wizardNumber = 45
+    val guessInt = guess.toIntOrNull()
+    if (guessInt == null ) {
+        return "not a number!"
+    } else  {
+        return if (guessInt > wizardNumber ) {
+            "lower"
+        } else if (guessInt < wizardNumber) {
+            "higher"
+        } else  {
+            return "correct, you may pass"
+            }
+        }
+}
+
 @Composable
 fun UserGuess(){
-    var currentGuess by remember {
-        mutableStateOf("")
+    var currentInput by remember {
+        mutableStateOf("") // currentGuess is defined as empty string
     }
-    TextField(value = currentGuess, onValueChange = {
+//    var currentGuess: Int? = currentInput.
+    TextField(value = currentInput, onValueChange = { // as the text field is updated with string, it updates the string currentGuess
         newValue ->
-        currentGuess = newValue
-        println(currentGuess)
+        currentInput = newValue
+        println(currentInput)
     } )
+    Button(
+        onClick = { println(checkGuess(currentInput)) }
+    ) {
+        Text(
+            text = "submit"
+        )
+    }
 }
+
+
 
 @Composable
 fun ResultScreen() {
