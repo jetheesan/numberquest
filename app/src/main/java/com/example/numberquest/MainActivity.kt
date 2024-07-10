@@ -68,9 +68,6 @@ fun App() {
             ResultScreen()
         }
     }
-    GameScreen(onNextScreen = {
-        navController.navigate("resultscreen")
-    })
 }
 
 @Composable()
