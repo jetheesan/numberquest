@@ -8,10 +8,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,9 +30,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.numberquest.ui.theme.NumberQuestTheme
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
+import androidx.compose.runtime.saveable.rememberSaveable
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,13 +51,6 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-//@Composable
-//fun Greeting(name: String, modifier: Modifier = Modifier) {
-//    Text(
-//        text = "Hello $name!",
-//        modifier = modifier
-//    )
-//}
 
 @Composable()
 fun App() {
@@ -92,35 +81,17 @@ fun GameScreen(onNextScreen: () -> Unit) {
         verticalArrangement = Arrangement.Center
     )
     {
-        Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(alignment = Alignment.Start),
-            text = "This is the game screen",
-        )
-        Button(onClick = onNextScreen) {
-            Text("Go to result screen")
-        }
+        WizardContent(message = resultMessage)
         UserGuess{guess ->
-            resultMessage = checkGuess(guess, wizardNumber)
-            println(resultMessage) }
+            resultMessage = viewModel.checkGuess(guess, wizardNumber)
+            println(resultMessage)
+
+        }
+
+
     }
 }
 
-private fun checkGuess( guess: String, wizardNumber: Int ) :String {
-    val guessInt = guess.toIntOrNull()
-    if (guessInt == null ) {
-        return "not a number!"
-    } else  {
-        return if (guessInt > wizardNumber ) {
-            "lower"
-        } else if (guessInt < wizardNumber) {
-            "higher"
-        } else  {
-            return "correct, you may pass"
-            }
-        }
-}
 
 @Composable
 fun UserGuess(submittedGuess: (String) -> Unit){
@@ -137,7 +108,8 @@ fun UserGuess(submittedGuess: (String) -> Unit){
         println(currentInput)
     } )
     Button(
-        onClick = {submittedGuess(currentInput) } ){
+        onClick = {submittedGuess(currentInput) }
+    ){
 
         Text(
             text = "submit")
@@ -145,6 +117,15 @@ fun UserGuess(submittedGuess: (String) -> Unit){
     }
 }
 
+@Composable
+fun WizardContent(message: String) {
+    Column(modifier = Modifier.padding(16.dp)) {
+        Text(
+            text = message,
+        )
+
+    }
+}
 
 
 
