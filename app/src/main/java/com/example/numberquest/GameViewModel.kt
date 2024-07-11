@@ -7,6 +7,7 @@ class GameViewModel: ViewModel() {
      val wizardNumber = (0..100).random()
 
     fun checkGuess( guess: String, wizardNumber: Int ) :String {
+        println("running checkGuess $guess $wizardNumber")
         val guessInt = guess.toIntOrNull()
         if (guessInt == null ) {
             return "not a number!"

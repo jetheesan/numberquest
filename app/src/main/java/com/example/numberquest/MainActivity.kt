@@ -20,6 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.material3.Button
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.setValue
 
 import androidx.compose.runtime.mutableStateOf
@@ -70,21 +71,22 @@ fun App() {
 @Composable()
 fun GameScreen(onNextScreen: () -> Unit) {
     val viewModel: GameViewModel = viewModel()
+    println("game view model created")
     val wizardNumber = viewModel.wizardNumber
-    println(wizardNumber)
+    println("wizard number generated: $wizardNumber")
     var resultMessage by remember { mutableStateOf("") }
-
-    println(wizardNumber)
+    println("result message: $resultMessage")
+    var wizardMessages  = remember { mutableStateListOf<String>() }
     Column (
         modifier = Modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     )
     {
-        WizardContent(message = resultMessage)
+        WizardContent(messages = wizardMessages)
         UserGuess{guess ->
-            resultMessage = viewModel.checkGuess(guess, wizardNumber)
-            println(resultMessage)
+            wizardMessages += viewModel.checkGuess(guess, wizardNumber)
+            println("resultMessage saved: $resultMessage")
 
         }
 
@@ -118,12 +120,13 @@ fun UserGuess(submittedGuess: (String) -> Unit){
 }
 
 @Composable
-fun WizardContent(message: String) {
+fun WizardContent(messages: MutableList<String>) {
     Column(modifier = Modifier.padding(16.dp)) {
-        Text(
-            text = message,
-        )
-
+        for (message in messages) {
+            Text(
+                text = message,
+            )
+        }
     }
 }
 
