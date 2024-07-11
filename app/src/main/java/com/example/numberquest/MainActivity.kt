@@ -4,11 +4,17 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -31,6 +37,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.numberquest.ui.theme.NumberQuestTheme
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.focus.focusModifier
+import androidx.compose.ui.graphics.Color
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,7 +80,8 @@ fun GameScreen(onNextScreen: () -> Unit) {
     val viewModel: GameViewModel = viewModel()
     val wizardNumber = viewModel.wizardNumber
     println(wizardNumber)
-    var resultMessage by remember { mutableStateOf("") }
+    var resultMessage by remember { mutableStateOf("Take a guess") }
+    var guessCounter by remember { mutableStateOf(0) }
 
     println(wizardNumber)
     Column (
@@ -82,15 +91,16 @@ fun GameScreen(onNextScreen: () -> Unit) {
     )
     {
         WizardContent(message = resultMessage)
-        UserGuess{guess ->
+        UserGuess { guess ->
             resultMessage = viewModel.checkGuess(guess, wizardNumber)
-            println(resultMessage)
+            guessCounter++
+            println(resultMessage)}
 
+            Text(text = "Guess Count")
+            Counter(count = guessCounter)
         }
-
-
     }
-}
+
 
 
 @Composable
@@ -127,6 +137,16 @@ fun WizardContent(message: String) {
     }
 }
 
+@Composable
+fun Counter (count:Int){
+    Box(modifier = Modifier
+        .size(48.dp)
+        .background(Color.Black, shape = CircleShape),
+        contentAlignment = Alignment.Center)
+
+    {Text(text=count.toString(), color = Color.White)}
+
+}
 
 
 @Composable
@@ -143,7 +163,7 @@ fun ResultScreen() {
 
 @Preview(showBackground = true)
 @Composable
-fun GreetingPreview() {
+fun GamePreview() {
     NumberQuestTheme {
         App()
     }
