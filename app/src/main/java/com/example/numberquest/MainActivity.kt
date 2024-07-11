@@ -34,6 +34,8 @@ import com.example.numberquest.ui.theme.NumberQuestTheme
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -85,6 +87,7 @@ fun GameScreen(onNextScreen: () -> Unit) {
         verticalArrangement = Arrangement.Center
     )
     {
+        WizardMessage()
         Text(
             modifier = Modifier
                 .fillMaxWidth()
@@ -129,7 +132,9 @@ fun UserGuess(){
         println(currentInput)
     } )
     Button(
-        onClick = { println(checkGuess(currentInput)) }
+        onClick = {
+            println(checkGuess(currentInput))
+        }
     ) {
         Text(
             text = "submit"
@@ -137,6 +142,15 @@ fun UserGuess(){
     }
 }
 
+@Composable
+fun WizardMessage() {
+    var message by remember {
+        mutableStateOf("Take a guess!")
+    }
+    Text(
+        text = message
+    )
+}
 
 
 @Composable
