@@ -8,10 +8,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,15 +25,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.numberquest.ui.theme.NumberQuestTheme
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.saveable.rememberSaveable
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -81,44 +76,32 @@ fun App() {
 
 @Composable()
 fun GameScreen(onNextScreen: () -> Unit) {
+    val viewModel: GameViewModel = viewModel()
+    val wizardNumber = viewModel.wizardNumber
+    println(wizardNumber)
+    var resultMessage by remember { mutableStateOf("") }
+
+    println(wizardNumber)
     Column (
         modifier = Modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     )
     {
-        WizardMessage()
-        Text(
-            modifier = Modifier
-                .fillMaxWidth()
-                .align(alignment = Alignment.Start),
-            text = "This is the game screen",
-        )
-        Button(onClick = onNextScreen) {
-            Text("Go to result screen")
+        WizardContent(message = resultMessage)
+        UserGuess{guess ->
+            resultMessage = viewModel.checkGuess(guess, wizardNumber)
+            println(resultMessage)
+
         }
-        UserGuess()
+
+
     }
 }
 
-private fun checkGuess( guess: String ) :String {
-    val wizardNumber = 45
-    val guessInt = guess.toIntOrNull()
-    if (guessInt == null ) {
-        return "not a number!"
-    } else  {
-        return if (guessInt > wizardNumber ) {
-            "lower"
-        } else if (guessInt < wizardNumber) {
-            "higher"
-        } else  {
-            return "correct, you may pass"
-            }
-        }
-}
 
 @Composable
-fun UserGuess(){
+fun UserGuess(submittedGuess: (String) -> Unit){
     var currentInput by remember {
         mutableStateOf("") // currentGuess is defined as empty string
     }
@@ -132,25 +115,25 @@ fun UserGuess(){
         println(currentInput)
     } )
     Button(
-        onClick = {
-            println(checkGuess(currentInput))
-        }
-    ) {
+        onClick = {submittedGuess(currentInput) }
+    ){
+
         Text(
-            text = "submit"
-        )
+            text = "submit")
+
     }
 }
 
 @Composable
-fun WizardMessage() {
-    var message by remember {
-        mutableStateOf("Take a guess!")
+fun WizardContent(message: String) {
+    Column(modifier = Modifier.padding(16.dp)) {
+        Text(
+            text = message,
+        )
+
     }
-    Text(
-        text = message
-    )
 }
+
 
 
 @Composable
