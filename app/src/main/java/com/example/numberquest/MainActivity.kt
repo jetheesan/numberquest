@@ -28,6 +28,8 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.foundation.Image
+import androidx.compose.ui.res.painterResource
 
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.text.input.KeyboardType
@@ -98,6 +100,7 @@ fun GameScreen(onNextScreen: () -> Unit) {
 
             Text(text = "Guess Count")
             Counter(count = guessCounter)
+            WizardImage()
         }
     }
 
@@ -147,8 +150,18 @@ fun Counter (count:Int){
 
     {Text(text=count.toString(), color = Color.White)}
 
+
+
+
+
 }
 
+@Composable
+fun WizardImage(){
+Image(
+painter = painterResource(id = R.drawable.wizard),
+contentDescription = "Wizard Image" )
+}
 
 @Composable
 fun ResultScreen() {
