@@ -27,6 +27,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -79,6 +80,12 @@ fun App() {
 
 @Composable()
 fun GameScreen(onNextScreen: () -> Unit) {
+    val viewModel: GameViewModel = viewModel()
+    val wizardNumber = viewModel.wizardNumber
+    println(wizardNumber)
+    var resultMessage by remember { mutableStateOf("") }
+
+    println(wizardNumber)
     Column (
         modifier = Modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -94,12 +101,13 @@ fun GameScreen(onNextScreen: () -> Unit) {
         Button(onClick = onNextScreen) {
             Text("Go to result screen")
         }
-        UserGuess()
+        UserGuess{guess ->
+            resultMessage = checkGuess(guess, wizardNumber)
+            println(resultMessage) }
     }
 }
 
-private fun checkGuess( guess: String ) :String {
-    val wizardNumber = 45
+private fun checkGuess( guess: String, wizardNumber: Int ) :String {
     val guessInt = guess.toIntOrNull()
     if (guessInt == null ) {
         return "not a number!"
@@ -115,7 +123,7 @@ private fun checkGuess( guess: String ) :String {
 }
 
 @Composable
-fun UserGuess(){
+fun UserGuess(submittedGuess: (String) -> Unit){
     var currentInput by remember {
         mutableStateOf("") // currentGuess is defined as empty string
     }
@@ -129,13 +137,14 @@ fun UserGuess(){
         println(currentInput)
     } )
     Button(
-        onClick = { println(checkGuess(currentInput)) }
-    ) {
+        onClick = {submittedGuess(currentInput) } ){
+
         Text(
-            text = "submit"
-        )
+            text = "submit")
+
     }
 }
+
 
 
 
