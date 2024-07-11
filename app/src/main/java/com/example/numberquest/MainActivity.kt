@@ -26,6 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.material3.Button
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.setValue
 
 import androidx.compose.runtime.mutableStateOf
@@ -79,22 +80,21 @@ fun App() {
 fun GameScreen(onNextScreen: () -> Unit) {
     val viewModel: GameViewModel = viewModel()
     val wizardNumber = viewModel.wizardNumber
-    println(wizardNumber)
-    var resultMessage by remember { mutableStateOf("Take a guess") }
-    var guessCounter by remember { mutableStateOf(0) }
+    println("This is gamescreen: $wizardNumber")
+    var resultMessage by remember { mutableStateOf("Take a guess" to Color.Black) }
+    var guessCounter by remember { mutableIntStateOf(0) }
 
-    println(wizardNumber)
     Column (
         modifier = Modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     )
     {
-        WizardContent(message = resultMessage)
+        WizardContent(message = resultMessage.first, color = resultMessage.second )
         UserGuess { guess ->
             resultMessage = viewModel.checkGuess(guess, wizardNumber)
             guessCounter++
-            println(resultMessage)}
+            println("Results: $resultMessage")}
 
             Text(text = "Guess Count")
             Counter(count = guessCounter)
@@ -115,7 +115,7 @@ fun UserGuess(submittedGuess: (String) -> Unit){
         onValueChange = { // as the text field is updated with string, it updates the string currentGuess
         newValue ->
         currentInput = newValue
-        println(currentInput)
+        println("current input: $currentInput")
     } )
     Button(
         onClick = {submittedGuess(currentInput) }
@@ -128,10 +128,11 @@ fun UserGuess(submittedGuess: (String) -> Unit){
 }
 
 @Composable
-fun WizardContent(message: String) {
+fun WizardContent(message: String, color: Color) {
     Column(modifier = Modifier.padding(16.dp)) {
         Text(
             text = message,
+            color = color
         )
 
     }
