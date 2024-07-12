@@ -76,7 +76,14 @@ class MainActivity : ComponentActivity() {
 @Composable()
 fun App() {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = "gamescreen") {
+    NavHost(navController = navController, startDestination = "homescreen") {
+    composable(route = "homescreen") {
+        HomeScreen(onStartGame = {
+            navController.navigate("gamescreen")
+    })
+
+    }
+
         composable(route = "gamescreen") {
             GameScreen(onNextScreen = {
                 navController.navigate("resultscreen")
@@ -85,6 +92,43 @@ fun App() {
         composable(route = "resultscreen") {
             ResultScreen()
         }
+    }
+}
+
+@Composable
+fun HomeScreen(onStartGame: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+            .padding(bottom = 0.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = " 🪄NUMBER QUEST 🪄",
+                fontWeight = FontWeight.ExtraBold,
+                fontSize = 35. sp
+            )
+            Spacer(modifier = Modifier.height(20.dp))
+            Button(onClick = onStartGame) {
+                Text(
+                    text = "Start Game",
+                )
+
+            }
+        }
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .padding(bottom = 0.dp),
+            contentAlignment = Alignment.BottomCenter
+        ) {
+            WizardImage(modifier = Modifier.size(400.dp))
+        }
+
     }
 }
 
@@ -104,7 +148,7 @@ fun GameScreen(onNextScreen: () -> Unit) {
         UserGuess { guess ->
             wizardMessages.add(viewModel.checkGuess(guess, wizardNumber))
             println("check guess result: ${viewModel.checkGuess(guess, wizardNumber)}")
-//          guessCounter++
+          guessCounter++
             println("wizard messages: $wizardMessages")
             for (i in 0..<wizardMessages.size) {
                 val message = wizardMessages[i]
@@ -153,7 +197,7 @@ fun WizardContent(messages: MutableList<String>) {
         {
         for (message in messages) {
             Box(modifier = Modifier
-                .padding(all=20.dp)
+                .padding(all = 20.dp)
                 .fillMaxWidth()
                 .background(
                     color = Color.Yellow,
@@ -190,10 +234,11 @@ fun Counter (count:Int){
 }
 
 @Composable
-fun WizardImage(){
+fun WizardImage(modifier: Modifier = Modifier){
 Image(
-painter = painterResource(id = R.drawable.wizard),
-contentDescription = "Wizard Image" )
+    painter = painterResource(id = R.drawable.wizard),
+    contentDescription = "Wizard Image" ,
+    modifier = modifier)
 }
 
 @Composable
