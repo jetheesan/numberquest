@@ -8,11 +8,15 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -24,9 +28,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.setValue
 import androidx.compose.foundation.Image
 import androidx.compose.ui.res.painterResource
@@ -40,6 +46,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.numberquest.ui.theme.NumberQuestTheme
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.snapshots.Snapshot
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
+import kotlin.reflect.typeOf
 import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.Color
 
@@ -82,28 +92,33 @@ fun App() {
 fun GameScreen(onNextScreen: () -> Unit) {
     val viewModel: GameViewModel = viewModel()
     val wizardNumber = viewModel.wizardNumber
-    println("This is gamescreen: $wizardNumber")
-    var resultMessage by remember { mutableStateOf("Take a guess" to Color.Black) }
     var guessCounter by remember { mutableIntStateOf(0) }
-
-    Column (
+    var wizardMessages = remember { mutableStateListOf<String>() }
+    Column(
         modifier = Modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     )
     {
-        WizardContent(message = resultMessage.first, color = resultMessage.second )
+        WizardContent(messages = wizardMessages)
         UserGuess { guess ->
-            resultMessage = viewModel.checkGuess(guess, wizardNumber)
-            guessCounter++
-            println("Results: $resultMessage")}
+            wizardMessages.add(viewModel.checkGuess(guess, wizardNumber))
+            println("check guess result: ${viewModel.checkGuess(guess, wizardNumber)}")
+//          guessCounter++
+            println("wizard messages: $wizardMessages")
+            for (i in 0..<wizardMessages.size) {
+                val message = wizardMessages[i]
+                println("wizardMessage $message")
 
-            Text(text = "Guess Count")
-            Counter(count = guessCounter)
-            WizardImage()
+            }
+
         }
-    }
+        Text(text = "Guess Count")
+        Counter(count = guessCounter)
+        WizardImage()
 
+    }
+}
 
 
 @Composable
@@ -118,7 +133,6 @@ fun UserGuess(submittedGuess: (String) -> Unit){
         onValueChange = { // as the text field is updated with string, it updates the string currentGuess
         newValue ->
         currentInput = newValue
-        println("current input: $currentInput")
     } )
     Button(
         onClick = {submittedGuess(currentInput) }
@@ -131,13 +145,32 @@ fun UserGuess(submittedGuess: (String) -> Unit){
 }
 
 @Composable
-fun WizardContent(message: String, color: Color) {
-    Column(modifier = Modifier.padding(16.dp)) {
-        Text(
-            text = message,
-            color = color
-        )
+fun WizardContent(messages: MutableList<String>) {
 
+    Column(modifier = Modifier
+        .padding(16.dp)
+        .fillMaxHeight(0.5f))
+        {
+        for (message in messages) {
+            Box(modifier = Modifier
+                .padding(all=20.dp)
+                .fillMaxWidth()
+                .background(
+                    color = Color.Yellow,
+                    shape = RoundedCornerShape(10.dp)
+                )
+                .padding(all = 16.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = message,
+                    color = Color.DarkGray,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Medium,
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+        }
     }
 }
 
