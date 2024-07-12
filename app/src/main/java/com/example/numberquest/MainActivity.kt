@@ -35,6 +35,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.setValue
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.ui.res.painterResource
 
 import androidx.compose.runtime.mutableStateOf
@@ -137,7 +138,7 @@ fun GameScreen(onNextScreen: () -> Unit) {
     val viewModel: GameViewModel = viewModel()
     val wizardNumber = viewModel.wizardNumber
     var guessCounter by remember { mutableIntStateOf(0) }
-    var wizardMessages = remember { mutableStateListOf<String>() }
+    val wizardMessages = remember { mutableStateListOf<String>("I've thought of a number between 1 and 100", "Can you read my mind?") }
     Column(
         modifier = Modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -145,10 +146,18 @@ fun GameScreen(onNextScreen: () -> Unit) {
     )
     {
         WizardContent(messages = wizardMessages)
+        println("current wizard messages: $wizardMessages")
+        println("adding new messages")
+        println("current wizard messages")
         UserGuess { guess ->
+            wizardMessages.add("You guessed $guess")
             wizardMessages.add(viewModel.checkGuess(guess, wizardNumber))
+            if (wizardMessages.size > 2) {
+                wizardMessages.removeAt(0)
+                wizardMessages.removeAt(0)
+            }
             println("check guess result: ${viewModel.checkGuess(guess, wizardNumber)}")
-          guessCounter++
+            guessCounter++
             println("wizard messages: $wizardMessages")
             for (i in 0..<wizardMessages.size) {
                 val message = wizardMessages[i]
@@ -189,11 +198,10 @@ fun UserGuess(submittedGuess: (String) -> Unit){
 }
 
 @Composable
-fun WizardContent(messages: MutableList<String>) {
+fun WizardContent(messages: List<String>) {
 
     Column(modifier = Modifier
-        .padding(16.dp)
-        .fillMaxHeight(0.5f))
+        .padding(16.dp))
         {
         for (message in messages) {
             Box(modifier = Modifier
@@ -202,8 +210,7 @@ fun WizardContent(messages: MutableList<String>) {
                 .background(
                     color = Color.Yellow,
                     shape = RoundedCornerShape(10.dp)
-                )
-                .padding(all = 16.dp),
+                ),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
@@ -211,7 +218,7 @@ fun WizardContent(messages: MutableList<String>) {
                     color = Color.DarkGray,
                     fontSize = 16.sp,
                     fontWeight = FontWeight.Medium,
-                    style = MaterialTheme.typography.bodyMedium
+                    style = MaterialTheme.typography.bodyMedium,
                 )
             }
         }
