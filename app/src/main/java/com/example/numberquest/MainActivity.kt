@@ -42,6 +42,7 @@ import androidx.compose.runtime.snapshots.Snapshot
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import kotlin.reflect.typeOf
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -97,10 +98,14 @@ fun GameScreen(onNextScreen: () -> Unit) {
         UserGuess{guess ->
             wizardMessages.add(viewModel.checkGuess(guess, wizardNumber))
             println("check guess result: ${viewModel.checkGuess(guess, wizardNumber)}")
+//            println(viewModel.checkGuess(guess, wizardNumber))
             println("wizard messages: $wizardMessages")
+            for (i in 0..< wizardMessages.size) {
+                val message = wizardMessages[i]
+                println("wizardMessage $message")
+            }
 
         }
-
 
     }
 }
@@ -132,6 +137,7 @@ fun UserGuess(submittedGuess: (String) -> Unit){
 
 @Composable
 fun WizardContent(messages: MutableList<String>) {
+
     Column(modifier = Modifier
         .padding(16.dp)
         .fillMaxHeight(0.5f))
